@@ -205,6 +205,8 @@ def _attack(params):
     print 'Bee %i is joining the swarm.' % params['i']
 
     try:
+        current_user = params['user']
+ 
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
@@ -234,13 +236,19 @@ def _attack(params):
             options += ' -k -T "%(mime_type)s; charset=UTF-8" -p /tmp/honeycomb' % params
 
 
-        if params['cookies'] is not '':
-            options += ' -H \"Cookie: %ssessionid=NotARealSessionID;\"' % params['cookies']
-        else:
-            options += ' -C \"sessionid=NotARealSessionID\"'
+        # if params['cookies'] is not '':
+        #     options += ' -H \"Cookie: %ssessionid=NotARealSessionID;\"' % params['cookies']
+        # else:
+        #     options += ' -C \"sessionid=NotARealSessionID\"'
+
+        options += ' -C "sessionid=%s' %current_user['sessionid']
+        options += ' -H "AUTHORIZATION : ClientID: c34458544f05f5d00aba"'
 
         params['options'] = options
-        benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s "%(url)s"' % params
+        benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
+        benchmark_command = benchmark_command + current_user['urls'][0]
+ 
+        print ">>" + benchmark_command
         stdin, stdout, stderr = client.exec_command(benchmark_command)
 
         response = {}
@@ -405,10 +413,11 @@ def _print_results(summarized_results):
         print 'Mission Assessment: Swarm annihilated target.'
 
 
-def attack(url, n, c, **options):
+def attack(users, n, c, **options):
     """
     Test the root url of this site.
     """
+    url = users[0]['urls'][0]
     username, key_name, zone, instance_ids = _read_server_list()
     headers = options.get('headers', '')
     csv_filename = options.get("csv_filename", '')
@@ -462,7 +471,7 @@ def attack(url, n, c, **options):
             'i': i,
             'instance_id': instance.id,
             'instance_name': instance.public_dns_name,
-            'url': url,
+            'user':users[i],
             'concurrent_requests': connections_per_instance,
             'num_requests': requests_per_instance,
             'username': username,
@@ -475,32 +484,32 @@ def attack(url, n, c, **options):
             'rps': options.get('rps')
         })
 
-    print 'Stinging URL so it will be cached for the attack.'
+    #print 'Stinging URL so it will be cached for the attack.'
 
-    request = urllib2.Request(url)
+    #request = urllib2.Request(url)
     # Need to revisit to support all http verbs.
-    if post_file:
-        try:
-            with open(post_file, 'r') as content_file:
-                content = content_file.read()
-            request.add_data(content)
-        except IOError:
-            print 'bees: error: The post file you provided doesn\'t exist.'
-            return
+    # if post_file:
+    #     try:
+    #         with open(post_file, 'r') as content_file:
+    #             content = content_file.read()
+    #         request.add_data(content)
+    #     except IOError:
+    #         print 'bees: error: The post file you provided doesn\'t exist.'
+    #         return
 
-    if cookies is not '':
-        request.add_header('Cookie', cookies)
+    # if cookies is not '':
+    #     request.add_header('Cookie', cookies)
 
-    # Ping url so it will be cached for testing
-    dict_headers = {}
-    if headers is not '':
-        dict_headers = headers = dict(j.split(':') for j in [i.strip() for i in headers.split(';') if i != ''])
+    # # Ping url so it will be cached for testing
+    # dict_headers = {}
+    # if headers is not '':
+    #     dict_headers = headers = dict(j.split(':') for j in [i.strip() for i in headers.split(';') if i != ''])
 
-    for key, value in dict_headers.iteritems():
-        request.add_header(key, value)
+    # for key, value in dict_headers.iteritems():
+    #     request.add_header(key, value)
 
-    response = urllib2.urlopen(request)
-    response.read()
+    # response = urllib2.urlopen(request)
+    # response.read()
 
     print 'Organizing the swarm.'
     # Spin up processes for connecting to EC2 instances
