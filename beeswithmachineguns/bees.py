@@ -245,45 +245,46 @@ def _attack(params):
         options += ' -H "AUTHORIZATION : ClientID: c34458544f05f5d00aba"'
 
         params['options'] = options
-        benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
-        benchmark_command = benchmark_command + current_user['urls'][0]
+        # benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
+        # benchmark_command = benchmark_command + current_user['urls'][0]
  
-        print ">>" + benchmark_command
-        stdin, stdout, stderr = client.exec_command(benchmark_command)
+        # print ">>" + benchmark_command
+        # stdin, stdout, stderr = client.exec_command(benchmark_command)
 
-        for i in range(1,len(current_user['urls'])):
+        for i in range(0,len(current_user['urls'])):
+            print current_user['urls'][i]
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
             benchmark_command = benchmark_command + current_user['urls'][i]
             stdin, stdout, stderr = client.exec_command(benchmark_command)
 
-        response = {}
+            response = {}
 
-        ab_results = stdout.read()
-        ms_per_request_search = re.search('Time\ per\ request:\s+([0-9.]+)\ \[ms\]\ \(mean\)', ab_results)
+            ab_results = stdout.read()
+            ms_per_request_search = re.search('Time\ per\ request:\s+([0-9.]+)\ \[ms\]\ \(mean\)', ab_results)
 
-        if not ms_per_request_search:
-            print 'Bee %i lost sight of the target (connection timed out running ab).' % params['i']
-            return None
+            if not ms_per_request_search:
+                print 'Bee %i lost sight of the target (connection timed out running ab).' % params['i']
+                return None
 
-        requests_per_second_search = re.search('Requests\ per\ second:\s+([0-9.]+)\ \[#\/sec\]\ \(mean\)', ab_results)
-        failed_requests = re.search('Failed\ requests:\s+([0-9.]+)', ab_results)
-        complete_requests_search = re.search('Complete\ requests:\s+([0-9]+)', ab_results)
+            requests_per_second_search = re.search('Requests\ per\ second:\s+([0-9.]+)\ \[#\/sec\]\ \(mean\)', ab_results)
+            failed_requests = re.search('Failed\ requests:\s+([0-9.]+)', ab_results)
+            complete_requests_search = re.search('Complete\ requests:\s+([0-9]+)', ab_results)
 
-        response['ms_per_request'] = float(ms_per_request_search.group(1))
-        response['requests_per_second'] = float(requests_per_second_search.group(1))
-        response['failed_requests'] = float(failed_requests.group(1))
-        response['complete_requests'] = float(complete_requests_search.group(1))
+            response['ms_per_request'] = float(ms_per_request_search.group(1))
+            response['requests_per_second'] = float(requests_per_second_search.group(1))
+            response['failed_requests'] = float(failed_requests.group(1))
+            response['complete_requests'] = float(complete_requests_search.group(1))
 
-        stdin, stdout, stderr = client.exec_command('cat %(csv_filename)s' % params)
-        response['request_time_cdf'] = []
-        for row in csv.DictReader(stdout):
-            row["Time in ms"] = float(row["Time in ms"])
-            response['request_time_cdf'].append(row)
-        if not response['request_time_cdf']:
-            print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
-            return None
+            stdin, stdout, stderr = client.exec_command('cat %(csv_filename)s' % params)
+            response['request_time_cdf'] = []
+            for row in csv.DictReader(stdout):
+                row["Time in ms"] = float(row["Time in ms"])
+                response['request_time_cdf'].append(row)
+            if not response['request_time_cdf']:
+                print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
+                return None
 
-        print 'Bee %i is out of ammo.' % params['i']
+            print 'Bee %i is out of ammo.' % params['i']
 
         client.close()
 
