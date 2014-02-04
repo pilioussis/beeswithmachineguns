@@ -287,7 +287,7 @@ def _attack(params):
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
         print "returning length", len(responses)
-        return response
+        return responses
     except socket.error, e:
         return e
 
@@ -528,7 +528,7 @@ def attack(users, n, c, **options):
     #     print "-----"
     #     print len(result)
     for i in range(0,5):
-        summarized_results = _summarize_results(results, params, csv_filename)
+        summarized_results = _summarize_results(results[i], params, csv_filename)
         print 'Offensive complete.'
         _print_results(summarized_results)
 
