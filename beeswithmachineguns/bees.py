@@ -241,7 +241,7 @@ def _attack(params):
         # else:
         #     options += ' -C \"sessionid=NotARealSessionID\"'
 
-        options += ' -C "sessionid=%s' %current_user['sessionid']
+        options += ' -C "sessionid=%s"' %current_user['sessionid']
         options += ' -H "AUTHORIZATION : ClientID: c34458544f05f5d00aba"'
 
         params['options'] = options
