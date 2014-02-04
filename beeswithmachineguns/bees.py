@@ -287,7 +287,7 @@ def _attack(params):
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
         print "returning length", len(responses)
-        return responses
+        return response
     except socket.error, e:
         return e
 
@@ -520,15 +520,15 @@ def attack(users, n, c, **options):
     # Spin up processes for connecting to EC2 instances
     pool = Pool(len(params))
 
-    results = pool.map(_attack, params)[0]
-    print "returned length", len(results)
-    for result in results:
-        print "-----"
-        print len(result)
+    results = pool.map(_attack, params)
+    # print "returned length", len(results)
+    # for result in results:
+    #     print "-----"
+    #     print len(result)
 
-        summarized_results = _summarize_results(result, params, csv_filename)
-        print 'Offensive complete.'
-        _print_results(summarized_results)
+    summarized_results = _summarize_results(result, params, csv_filename)
+    print 'Offensive complete.'
+    _print_results(summarized_results)
 
     print 'The swarm is awaiting new orders.'
 
