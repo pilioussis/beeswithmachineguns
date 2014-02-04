@@ -250,7 +250,7 @@ def _attack(params):
  
         # print ">>" + benchmark_command
         # stdin, stdout, stderr = client.exec_command(benchmark_command)
-        responses= []
+        responses= {}
         for i in range(0,len(current_user['urls'])):
             print current_user['urls'][i]
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
@@ -283,7 +283,7 @@ def _attack(params):
             if not response['request_time_cdf']:
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
                 return None
-            responses.append(response)
+            responses[str(i)] = response
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
         print "returning length", len(responses)
@@ -529,8 +529,8 @@ def attack(users, n, c, **options):
     #     print len(result)
     for i in range(0,5):
         print "~~~~~~~~~~~~"
-        print results[i]
-        summarized_results = _summarize_results(results[i], params, csv_filename)
+        print results[str(i)]
+        summarized_results = _summarize_results(results[str(i)], params, csv_filename)
         print 'Offensive complete.'
         _print_results(summarized_results)
 
