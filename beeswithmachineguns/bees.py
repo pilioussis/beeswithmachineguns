@@ -250,7 +250,7 @@ def _attack(params):
  
         # print ">>" + benchmark_command
         # stdin, stdout, stderr = client.exec_command(benchmark_command)
-
+        responses= []
         for i in range(0,len(current_user['urls'])):
             print current_user['urls'][i]
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
@@ -284,11 +284,11 @@ def _attack(params):
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
                 return None
 
-            print 'Bee %i is out of ammo.' % params['i']
-
+            responses.append(response)
+        print 'Bee %i is out of ammo.' % params['i']
         client.close()
 
-        return response
+        return responses
     except socket.error, e:
         return e
 
@@ -522,9 +522,11 @@ def attack(users, n, c, **options):
     pool = Pool(len(params))
     results = pool.map(_attack, params)
 
-    summarized_results = _summarize_results(results, params, csv_filename)
-    print 'Offensive complete.'
-    _print_results(summarized_results)
+    for result in results:
+
+        summarized_results = _summarize_results(result, params, csv_filename)
+        print 'Offensive complete.'
+        _print_results(summarized_results)
 
     print 'The swarm is awaiting new orders.'
 
