@@ -283,7 +283,7 @@ def _attack(params):
                 response['request_time_cdf'].append(row)
             if not response['request_time_cdf']:
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
-                return None
+                continue
             responses.append(response)
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
