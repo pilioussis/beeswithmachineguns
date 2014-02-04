@@ -529,7 +529,7 @@ def attack(users, n, c, **options):
     #     print len(result)
     for i in range(0,5):
         print "~~~~~~~~~~~~"
-        print results[str(i)]
+        print results
         summarized_results = _summarize_results(results[str(i)], params, csv_filename)
         print 'Offensive complete.'
         _print_results(summarized_results)
