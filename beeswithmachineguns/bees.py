@@ -526,7 +526,7 @@ def attack(users, n, c, **options):
     #     print "-----"
     #     print len(result)
 
-    summarized_results = _summarize_results(result, params, csv_filename)
+    summarized_results = _summarize_results(results, params, csv_filename)
     print 'Offensive complete.'
     _print_results(summarized_results)
 
