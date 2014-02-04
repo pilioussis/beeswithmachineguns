@@ -283,7 +283,7 @@ def _attack(params):
             if not response['request_time_cdf']:
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
                 return None
-
+            print "appending to responses, length: " , len(responses)
             responses.append(response)
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
@@ -524,7 +524,7 @@ def attack(users, n, c, **options):
     
     for result in results:
         print "-----"
-        print result
+        print len(result)
 
         summarized_results = _summarize_results(result, params, csv_filename)
         print 'Offensive complete.'
