@@ -520,7 +520,7 @@ def attack(users, n, c, **options):
     # Spin up processes for connecting to EC2 instances
     pool = Pool(len(params))
 
-    results = pool.map(_attack, params)
+    results = pool.map(_attack, params)[0]
 
     print results
     # print "returned length", len(results)
@@ -529,8 +529,8 @@ def attack(users, n, c, **options):
     #     print len(result)
     for i in range(0,5):
         print "~~~~~~~~~~~~"
-        print results
-        summarized_results = _summarize_results(results[str(i)], params, csv_filename)
+        
+        summarized_results = _summarize_results([results[str(i)]], params, csv_filename)
         print 'Offensive complete.'
         _print_results(summarized_results)
 
