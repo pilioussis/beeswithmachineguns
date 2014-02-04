@@ -521,6 +521,8 @@ def attack(users, n, c, **options):
     pool = Pool(len(params))
 
     results = pool.map(_attack, params)
+
+    print results
     # print "returned length", len(results)
     # for result in results:
     #     print "-----"
