@@ -283,7 +283,6 @@ def _attack(params):
             if not response['request_time_cdf']:
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
                 return None
-            print "appending to responses, length: " , len(responses)
             responses.append(response)
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
@@ -521,7 +520,7 @@ def attack(users, n, c, **options):
     # Spin up processes for connecting to EC2 instances
     pool = Pool(len(params))
 
-    results = pool.map(_attack, params)
+    results = pool.map(_attack, params)[0]
     print "returned length", len(results)
     for result in results:
         print "-----"
