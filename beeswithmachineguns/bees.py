@@ -525,10 +525,10 @@ def attack(users, n, c, **options):
     # for result in results:
     #     print "-----"
     #     print len(result)
-
-    summarized_results = _summarize_results(results, params, csv_filename)
-    print 'Offensive complete.'
-    _print_results(summarized_results)
+    for i in range(0,5):
+        summarized_results = _summarize_results(results, params, csv_filename)
+        print 'Offensive complete.'
+        _print_results(summarized_results)
 
     print 'The swarm is awaiting new orders.'
 
