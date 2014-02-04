@@ -250,7 +250,7 @@ def _attack(params):
  
         # print ">>" + benchmark_command
         # stdin, stdout, stderr = client.exec_command(benchmark_command)
-        responses= {}
+        responses= []
         for i in range(0,len(current_user['urls'])):
             print current_user['urls'][i]
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
@@ -277,16 +277,16 @@ def _attack(params):
 
             stdin, stdout, stderr = client.exec_command('cat %(csv_filename)s' % params)
             response['request_time_cdf'] = []
+            response['url'] = current_user['urls'][i]
             for row in csv.DictReader(stdout):
                 row["Time in ms"] = float(row["Time in ms"])
                 response['request_time_cdf'].append(row)
             if not response['request_time_cdf']:
                 print 'Bee %i lost sight of the target (connection timed out reading csv).' % params['i']
                 return None
-            responses[str(i)] = response
+            responses.append(response)
         print 'Bee %i is out of ammo.' % params['i']
         client.close()
-        print "returning length", len(responses)
         return responses
     except socket.error, e:
         return e
@@ -522,16 +522,9 @@ def attack(users, n, c, **options):
 
     results = pool.map(_attack, params)[0]
 
-    print results
-    # print "returned length", len(results)
-    # for result in results:
-    #     print "-----"
-    #     print len(result)
-    for i in range(0,5):
-        print "~~~~~~~~~~~~"
-        
-        summarized_results = _summarize_results([results[str(i)]], params, csv_filename)
-        print 'Offensive complete.'
+    for result in results:
+        summarized_results = _summarize_results([result], params, csv_filename)
+        print '~~~~~~~~~~~~~~~~~~~~~\nResults for ' + result['url']
         _print_results(summarized_results)
 
     print 'The swarm is awaiting new orders.'
