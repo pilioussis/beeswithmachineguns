@@ -252,7 +252,7 @@ def _attack(params):
         # stdin, stdout, stderr = client.exec_command(benchmark_command)
         responses= []
         for i in range(0,len(current_user['urls'])):
-            print "Bee %s is hitting %s..." % (params['id'], current_user['urls'][i])
+            print "Bee %s is hitting %s..." % (params['i'], current_user['urls'][i])
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
             benchmark_command = benchmark_command + current_user['urls'][i]
             stdin, stdout, stderr = client.exec_command(benchmark_command)
