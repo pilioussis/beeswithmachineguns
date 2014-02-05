@@ -209,10 +209,19 @@ def _attack(params):
  
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(
-            params['instance_name'],
-            username=params['username'],
-            key_filename=_get_pem_path(params['key_name']))
+        max_attempts = 30
+        while max_attempts > 0:
+            print "Attempting to connect to bee %i..." % params['i']
+            try:
+                client.connect(
+                    params['instance_name'],
+                    username=params['username'],
+                    key_filename=_get_pem_path(params['key_name']))
+                break 
+            except socket.error:
+                pass 
+            time.sleep(1)
+            max_attempts -= 1
 
         print 'Bee %i is firing her machine gun. Bang bang!' % params['i']
 
