@@ -4,6 +4,10 @@ A utility for arming (creating) many bees (micro EC2 instances) to attack (load 
 
 Also, retribution for "this shameful act":http://kottke.org/10/10/tiny-catapult-for-throwing-pies-at-bees against a proud hive.
 
+h2. Updates
+
+We've added the ability to request URLs as a particular user. 
+
 h2. Dependencies
 
 * Python 2.6
