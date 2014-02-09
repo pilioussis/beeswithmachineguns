@@ -273,7 +273,7 @@ def _attack(params):
 
             if not ms_per_request_search:
                 print 'Bee %i lost sight of the target (connection timed out running ab).' % params['i']
-                return None
+                continue 
 
             requests_per_second_search = re.search('Requests\ per\ second:\s+([0-9.]+)\ \[#\/sec\]\ \(mean\)', ab_results)
             failed_requests = re.search('Failed\ requests:\s+([0-9.]+)', ab_results)
@@ -431,7 +431,6 @@ def attack(users, n, c, **options):
     """
     Test the root url of this site.
     """
-    url = users[0]['urls'][0]
     username, key_name, zone, instance_ids = _read_server_list()
     headers = options.get('headers', '')
     csv_filename = options.get("csv_filename", '')
