@@ -261,14 +261,18 @@ def _attack(params):
         # stdin, stdout, stderr = client.exec_command(benchmark_command)
         responses= []
         for i in range(0,len(current_user['urls'])):
-            print "Bee %s is hitting %s..." % (params['i'], current_user['urls'][i])
+            url = current_user['urls'][i]
             benchmark_command = 'ab -r -n %(num_requests)s -c %(concurrent_requests)s %(options)s ' % params
-            benchmark_command = benchmark_command + current_user['urls'][i]
+            benchmark_command = benchmark_command + url
+            print "Bee %s is hitting %s..." % (params['i'], url)
+            print "\tCommand: %s" % benchmark_command
             stdin, stdout, stderr = client.exec_command(benchmark_command)
 
             response = {}
 
             ab_results = stdout.read()
+            print "Bee %s has finished hitting %s." % (params['i'], url)
+            print "\tResults: %s" % ab_results
             ms_per_request_search = re.search('Time\ per\ request:\s+([0-9.]+)\ \[ms\]\ \(mean\)', ab_results)
 
             if not ms_per_request_search:
@@ -484,7 +488,7 @@ def attack(users, n, c, **options):
             'i': i,
             'instance_id': instance.id,
             'instance_name': instance.public_dns_name,
-            'user':users[i],
+            'user': users[i],
             'concurrent_requests': connections_per_instance,
             'num_requests': requests_per_instance,
             'username': username,
